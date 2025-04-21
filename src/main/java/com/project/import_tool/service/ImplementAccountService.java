@@ -40,11 +40,11 @@ public class ImplementAccountService implements AccountService{
         accountNameField.put("fieldType","String");
         accountNameField.put("isMandatory",true);
 
-        ObjectNode constraints = mapper.createObjectNode();
-        constraints.put("minLength",1);
-        constraints.put("maxLength",50);
+        ObjectNode accountNameConstraints = mapper.createObjectNode();
+        accountNameConstraints.put("minLength",1);
+        accountNameConstraints.put("maxLength",50);
 
-        accountNameField.set("constraints",constraints);
+        accountNameField.set("constraints",accountNameConstraints);
 
         // accountType metaData
         ObjectNode accountTypeField = mapper.createObjectNode();
@@ -56,9 +56,20 @@ public class ImplementAccountService implements AccountService{
         accountTypeField.set("options",options);
         accountTypeField.put("isMandatory",true);
 
+        // industry metaData
+        ObjectNode industryField = mapper.createObjectNode();
+        industryField.put("fieldName","industry");
+        industryField.put("fieldType","String");
+        ObjectNode industryConstraints = mapper.createObjectNode();
+        industryConstraints.put("minLength",1);
+        industryConstraints.put("maxLength",50);
+        industryField.set("constraints",industryConstraints);
+        industryField.put("isMandatory",false);
+
         //adding to properties arrayNode
         propertiesNode.add(accountNameField);
         propertiesNode.add(accountTypeField);
+        propertiesNode.add(industryField);
 
         //inserting into rootNode
         rootNode.put("properties",propertiesNode);
@@ -66,8 +77,8 @@ public class ImplementAccountService implements AccountService{
     }
 
     @Override
-    public Accounts addAccountData(String accountName, String accountType) {
-        if(accountName == null || accountName.isEmpty() || accountType == null || accountType.isEmpty()){
+    public Accounts addAccountData(String accountName, String accountType, String industry) {
+        if(accountName == null || accountName.isEmpty() || accountType == null || accountType.isEmpty() || industry.isEmpty() || industry == null){
             throw new IllegalStateException("Provide all fields");
         }
 
@@ -75,7 +86,7 @@ public class ImplementAccountService implements AccountService{
             throw new IllegalStateException("Account Name already taken");
         }
 
-        Accounts account = new Accounts(accountName,accountType);
+        Accounts account = new Accounts(accountName,accountType,industry);
         accountRepository.save(account);
         return account;
     }
@@ -91,12 +102,9 @@ public class ImplementAccountService implements AccountService{
         Accounts account = existingAccount.get();
 
         if(updates.containsKey("accountName")){
-            //Converting Object to String
-            System.out.println("***");
-            String accountName = (updates.get("accountName")).toString();
 
+            String accountName = (updates.get("accountName")).toString();
             System.out.println(accountName);
-            System.out.println("***");
 
             if(accountRepository.existsByAccountName(accountName)){
                 throw new IllegalStateException("Account Name already taken");
@@ -108,6 +116,11 @@ public class ImplementAccountService implements AccountService{
         if(updates.containsKey("accountType")){
             String accountType = (updates.get("accountType")).toString();
             account.setAccountType(accountType);
+        }
+
+        if(updates.containsKey("industry")){
+            String accountType = (updates.get("industry")).toString();
+            account.setIndustry(accountType);
         }
 
         return accountRepository.save(account);

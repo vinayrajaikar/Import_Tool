@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CustomFieldsRepository extends JpaRepository<CustomFields,Integer> {
+    CustomFields findByEntity(String entity);
 }

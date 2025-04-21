@@ -22,7 +22,7 @@ public class AccountController {
 
     @PostMapping("/add-account")
     public ResponseEntity<Map<String,Object>>addAccount(@RequestBody Accounts account){
-        Accounts addedAccount = accountService.addAccountData(account.getAccountName(),account.getAccountType());
+        Accounts addedAccount = accountService.addAccountData(account.getAccountName(),account.getAccountType(),account.getIndustry());
         Map<String,Object>response=new HashMap<>();
         response.put("message","Account added Successfully");
         response.put("account",addedAccount);

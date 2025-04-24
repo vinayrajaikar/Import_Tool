@@ -154,4 +154,9 @@ public class ImplementAccountService implements AccountService{
     public List<Accounts> getAllAccountData() {
         return accountRepository.findAll();
     }
+
+    @Override
+    public Accounts verifyMetadata() {
+        return null;
+    }
 }

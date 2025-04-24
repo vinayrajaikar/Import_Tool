@@ -9,12 +9,19 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.data.RepositoryItemWriter;
+import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.LineMapper;
+import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import java.util.Arrays;
 
 @Configuration
 public class SpringBatchConfig {
@@ -24,9 +31,38 @@ public class SpringBatchConfig {
 
 //    1. Custom Reader:
     @Bean
-    CustomReader customReader(){
-        return new CustomReader();
+    public FlatFileItemReader<Accounts>reader(){
+        return new FlatFileItemReaderBuilder<Accounts>()
+                .name("accountItemReader")
+                .resource(new FileSystemResource(System.getProperty("user.dir") + "/uploads/accounts.csv"))
+                .linesToSkip(1)
+                .lineMapper(customLineMapper())//maps each line of csv to object and return it.
+                .targetType(Accounts.class)
+                .build();
     }
+
+    @Bean
+    public LineMapper<Accounts> customLineMapper(){
+        return new LineMapper<Accounts>() {
+            @Override
+            public Accounts mapLine(String line, int lineNumber) throws Exception {
+                String[] fields = line.split(",");
+//                System.out.println(Arrays.toString(fields));
+                if(true){
+                    Accounts account = new Accounts();
+                    account.setAccountName(fields[0]);
+                    account.setAccountType(fields[1]);
+                    account.setIndustry(fields[2]);
+                    return account;
+                }
+                return null;
+            }
+        };
+    }
+
+//    CustomReader customReader(){
+//        return new CustomReader();
+//    }
 
 //    2. Processor:
     @Bean
@@ -39,7 +75,7 @@ public class SpringBatchConfig {
     RepositoryItemWriter<Accounts>writer(){
         RepositoryItemWriter<Accounts>writer = new RepositoryItemWriter<>();
         writer.setRepository(accountRepository);
-        writer.setMethodName("saveAll");
+        writer.setMethodName("save");
         return writer;
     }
 
@@ -57,10 +93,10 @@ public class SpringBatchConfig {
     public Step step(JobRepository jobRepository, PlatformTransactionManager transactionManager){
         return new StepBuilder("csv-import-step",jobRepository)
                 .<Accounts, Accounts>chunk(100, transactionManager)
-                .reader(customReader())
+                .reader(reader())
                 .processor(processor())
                 .writer(writer())
-//                .taskExecutor()
+                .taskExecutor(new SimpleAsyncTaskExecutor())
                 .build();
     }
 

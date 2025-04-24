@@ -14,4 +14,5 @@ public interface AccountService {
     public Accounts deleteAccountData(Long accountId);
     public Accounts getAccountsData(Long accountId);
     public List<Accounts> getAllAccountData();
+    public Accounts verifyMetadata();
 }

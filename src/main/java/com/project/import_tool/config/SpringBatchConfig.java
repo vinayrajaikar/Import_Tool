@@ -2,6 +2,7 @@ package com.project.import_tool.config;
 
 import com.project.import_tool.model.Accounts;
 import com.project.import_tool.repository.AccountRepository;
+import com.project.import_tool.service.AccountService;
 import org.springframework.batch.core.Entity;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -22,14 +23,27 @@ import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 @Configuration
 public class SpringBatchConfig {
 
-    @Autowired
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
+    private final AccountService accountService;
+    private final CsvValidator csvValidator;
+    private final JobListener jobListener;
+    private final FailedRecordStore failedRecordStore;
 
-//    1. Custom Reader:
+    @Autowired
+    public SpringBatchConfig(AccountRepository accountRepository, AccountService accountService, CsvValidator csvValidator, JobListener jobListener, FailedRecordStore failedRecordStore) {
+        this.accountRepository = accountRepository;
+        this.accountService = accountService;
+        this.csvValidator = csvValidator;
+        this.jobListener = jobListener;
+        this.failedRecordStore = failedRecordStore;
+    }
+
+//    1. Reader:
     @Bean
     public FlatFileItemReader<Accounts>reader(){
         return new FlatFileItemReaderBuilder<Accounts>()
@@ -47,22 +61,24 @@ public class SpringBatchConfig {
             @Override
             public Accounts mapLine(String line, int lineNumber) throws Exception {
                 String[] fields = line.split(",");
-//                System.out.println(Arrays.toString(fields));
-                if(true){
-                    Accounts account = new Accounts();
-                    account.setAccountName(fields[0]);
-                    account.setAccountType(fields[1]);
-                    account.setIndustry(fields[2]);
-                    return account;
+                System.out.println(Arrays.asList(fields));
+                Optional<String> error = csvValidator.validateWithMetadata(fields,accountService.getAccountMetaData());
+
+                if(error.isPresent()){
+                    System.out.println(error.get());
+                    failedRecordStore.add(line,error.get());
+                    return null;
                 }
-                return null;
+
+                Accounts account = new Accounts();
+                account.setAccountName(fields[0]);
+                account.setAccountType(fields[1]);
+                account.setIndustry(fields[2]);
+                return account;
+
             }
         };
     }
-
-//    CustomReader customReader(){
-//        return new CustomReader();
-//    }
 
 //    2. Processor:
     @Bean
@@ -85,6 +101,7 @@ public class SpringBatchConfig {
     public Job job(JobRepository jobRepository, Step step){
         return  new JobBuilder("importData",jobRepository)
             .start(step)
+            .listener(jobListener)
             .build();
     }
 

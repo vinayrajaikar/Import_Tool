@@ -1,11 +1,11 @@
 package com.project.import_tool.config;
 
-import com.project.import_tool.model.Accounts;
+import com.project.import_tool.model.Account;
 import org.springframework.batch.item.ItemProcessor;
 
-public class EntityProcessor implements ItemProcessor<Accounts,Accounts> {
+public class EntityProcessor implements ItemProcessor<Account, Account> {
     @Override
-    public Accounts process(Accounts account) throws Exception {
+    public Account process(Account account) throws Exception {
         return account;
     }
 }

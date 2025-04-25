@@ -1,5 +1,6 @@
 package com.project.import_tool.config;
 
+import com.project.import_tool.model.ImportData;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
@@ -16,6 +17,9 @@ public class Launcher {
     @Autowired
     private Job job;
 
+    @Autowired
+    private JobListener jobListener;
+
     public String jobLauncher() {
 
         final JobParameters jobParameters = new JobParametersBuilder()
@@ -30,7 +34,7 @@ public class Launcher {
         } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
                  | JobParametersInvalidException e) {
             e.printStackTrace();
-            return "Job failed with exception: " + e.getMessage();
+            return null;
         }
     }
 }

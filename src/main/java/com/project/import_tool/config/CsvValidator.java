@@ -70,7 +70,7 @@ public class CsvValidator {
 
         }
 
-        return Optional.empty();//valid data
+        return Optional.empty();// make it boolean
 
     }
 }

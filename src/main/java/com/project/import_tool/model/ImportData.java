@@ -17,12 +17,16 @@ public class ImportData {
     @Column(name = "ENTITY", nullable = false)
     private String entity;
 
-    @Column(name = "INPUT_CSV_FILE")
-    @Lob
+    @Column(name = "INPUT_CSV_FILE", columnDefinition = "TEXT")
     private String inputCsvFile;
 
-    @Column(name = "FAILED_RECORDS")
-    @Lob
+    @Column(name="TOTAL_RECORDS_COUNT")
+    private Long totalRecordsCount;
+
+    @Column(name = "FAILED_RECORDS_COUNT")
+    private Long failedRecordsCount;
+
+    @Column(name = "FAILED_RECORDS", columnDefinition = "TEXT")
     private String failedRecords;
 
     @Column(name = "CREATED_AT")
@@ -76,4 +80,21 @@ public class ImportData {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    public Long getFailedRecordsCount() {
+        return failedRecordsCount;
+    }
+
+    public void setFailedRecordsCount(Long failedRecordsCount) {
+        this.failedRecordsCount = failedRecordsCount;
+    }
+
+    public Long getTotalRecordsCount() {
+        return totalRecordsCount;
+    }
+
+    public void setTotalRecordsCount(Long totalRecordsCount) {
+        this.totalRecordsCount = totalRecordsCount;
+    }
+
 }

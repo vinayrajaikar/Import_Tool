@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.project.import_tool.model.Accounts;
+import com.project.import_tool.model.Account;
 import com.project.import_tool.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,7 +77,7 @@ public class ImplementAccountService implements AccountService{
     }
 
     @Override
-    public Accounts addAccountData(String accountName, String accountType, String industry) {
+    public Account addAccountData(String accountName, String accountType, String industry) {
         if(accountName == null || accountName.isEmpty() || accountType == null || accountType.isEmpty() || industry.isEmpty() || industry == null){
             throw new IllegalStateException("Provide all fields");
         }
@@ -86,20 +86,20 @@ public class ImplementAccountService implements AccountService{
             throw new IllegalStateException("Account Name already taken");
         }
 
-        Accounts account = new Accounts(accountName,accountType,industry);
+        Account account = new Account(accountName,accountType,industry);
         accountRepository.save(account);
         return account;
     }
 
     @Override
-    public Accounts updateAccountData(Long id, Map<String,Object> updates) {
-        Optional<Accounts>existingAccount = accountRepository.findById(id);
+    public Account updateAccountData(Long id, Map<String,Object> updates) {
+        Optional<Account>existingAccount = accountRepository.findById(id);
         System.out.println("Updates: "+updates);
         if(existingAccount.isEmpty()){
             throw new IllegalStateException("Invalid id");
         }
 
-        Accounts account = existingAccount.get();
+        Account account = existingAccount.get();
 
         if(updates.containsKey("accountName")){
 
@@ -127,8 +127,8 @@ public class ImplementAccountService implements AccountService{
     }
 
     @Override
-    public Accounts deleteAccountData(Long accountId) {
-        Optional<Accounts>existingAccount = accountRepository.findById(accountId);
+    public Account deleteAccountData(Long accountId) {
+        Optional<Account>existingAccount = accountRepository.findById(accountId);
         if(existingAccount.isEmpty()){
             throw new IllegalStateException("Invalid id");
         }
@@ -137,11 +137,11 @@ public class ImplementAccountService implements AccountService{
     }
 
     @Override
-    public Accounts getAccountsData(Long accountId) {
+    public Account getAccountsData(Long accountId) {
         if(accountId==null){
             throw new IllegalStateException("Provide account id");
         }
-        Optional<Accounts>account = accountRepository.findById(accountId);
+        Optional<Account>account = accountRepository.findById(accountId);
 
         if(account.isEmpty()){
             throw new IllegalStateException("Account with this id does not exists");
@@ -151,12 +151,12 @@ public class ImplementAccountService implements AccountService{
     }
 
     @Override
-    public List<Accounts> getAllAccountData() {
+    public List<Account> getAllAccountData() {
         return accountRepository.findAll();
     }
 
     @Override
-    public Accounts verifyMetadata() {
+    public Account verifyMetadata() {
         return null;
     }
 }

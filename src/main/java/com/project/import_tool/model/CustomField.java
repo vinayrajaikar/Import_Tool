@@ -5,8 +5,8 @@ import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Type;
 
-@Entity(name = "CustomFields")
-public class CustomFields {
+@Entity(name = "CustomField")
+public class CustomField {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

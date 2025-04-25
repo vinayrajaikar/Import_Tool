@@ -1,7 +1,7 @@
 package com.project.import_tool.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.project.import_tool.model.Accounts;
+import com.project.import_tool.model.Account;
 import com.project.import_tool.service.ImplementAccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +21,8 @@ public class AccountController {
     }
 
     @PostMapping("/add-account")
-    public ResponseEntity<Map<String,Object>>addAccount(@RequestBody Accounts account){
-        Accounts addedAccount = accountService.addAccountData(account.getAccountName(),account.getAccountType(),account.getIndustry());
+    public ResponseEntity<Map<String,Object>>addAccount(@RequestBody Account account){
+        Account addedAccount = accountService.addAccountData(account.getAccountName(),account.getAccountType(),account.getIndustry());
         Map<String,Object>response=new HashMap<>();
         response.put("message","Account added Successfully");
         response.put("account",addedAccount);
@@ -31,7 +31,7 @@ public class AccountController {
 
     @GetMapping("/get-account/{accountId}")
     public ResponseEntity<Map<String,Object>>getAccount(@PathVariable Long accountId){
-        Accounts account = accountService.getAccountsData(accountId);
+        Account account = accountService.getAccountsData(accountId);
         Map<String,Object>response = new HashMap<>();
         response.put("message","Account fetched successfully");
         response.put("account",account);
@@ -40,7 +40,7 @@ public class AccountController {
 
     @GetMapping("/get-all-accounts")
     public ResponseEntity<Map<String,Object>>getAllAccounts(){
-        List<Accounts>accounts=accountService.getAllAccountData();
+        List<Account>accounts=accountService.getAllAccountData();
         Map<String,Object>response = new HashMap<>();
         response.put("accounts",accounts);
         response.put("message","Accounts fetched successfully");
@@ -51,7 +51,7 @@ public class AccountController {
     public ResponseEntity<Map<String,Object>>updateAccount(@PathVariable Long accountId,
                                                            @RequestBody Map<String,Object>updates){
         System.out.println(updates);
-        Accounts account = accountService.updateAccountData(accountId,updates);
+        Account account = accountService.updateAccountData(accountId,updates);
         Map<String,Object>response = new HashMap<>();
         response.put("accounts",account);
         response.put("message","Account updated Successfully");
@@ -60,7 +60,7 @@ public class AccountController {
 
     @DeleteMapping("/delete-account/{accountId}")
     public ResponseEntity<Map<String,Object>>deleteAccount(@PathVariable Long accountId){
-        Accounts account = accountService.deleteAccountData(accountId);
+        Account account = accountService.deleteAccountData(accountId);
         Map<String,Object>response = new HashMap<>();
         response.put("accounts",account);
         response.put("message","Account deleted Successfully");

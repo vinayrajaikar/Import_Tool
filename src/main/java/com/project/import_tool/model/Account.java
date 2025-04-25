@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name = "Accounts")
-public class Accounts {
+@Entity(name = "Account")
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,15 +36,15 @@ public class Accounts {
     private String industry;
 
     @OneToMany(mappedBy = "account",cascade = CascadeType.ALL)
-    private List<Users>users = new ArrayList<>();
+    private List<User>users = new ArrayList<>();
 
-    public Accounts(String accountName, String accountType, String industry) {
+    public Account(String accountName, String accountType, String industry) {
         this.accountName = accountName;
         this.accountType = AccountType.valueOf(accountType);
         this.industry = industry;
     }
 
-    public Accounts() {
+    public Account() {
     }
 
     public Long getAccountId() {
@@ -71,7 +71,7 @@ public class Accounts {
         this.accountType = AccountType.fromString(accountType);
     }
 
-    public List<Users> getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 

@@ -5,8 +5,8 @@ import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Type;
 
-@Entity(name = "Contacts")
-public class Contacts {
+@Entity(name = "Contact")
+public class Contact {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,17 +24,17 @@ public class Contacts {
 
     @OneToOne
     @JoinColumn(name = "USER_ID")
-    private Users user;
+    private User user;
 
     @Type(JsonBinaryType.class)
     @Column(name = "CUSTOM_FIELDS" ,columnDefinition = "jsonb")
     private JsonNode customFields;
 
-    public Users getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(Users user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

@@ -22,7 +22,4 @@ public class FailedRecordStore {
         failedRecords.clear();
     }
 
-
-
-
 }

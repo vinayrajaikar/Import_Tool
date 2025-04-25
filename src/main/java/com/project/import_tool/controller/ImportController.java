@@ -1,8 +1,9 @@
 package com.project.import_tool.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.project.import_tool.config.JobListener;
 import com.project.import_tool.config.Launcher;
-import org.springframework.batch.core.launch.JobLauncher;
+import com.project.import_tool.model.ImportData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,9 @@ public class ImportController {
 
     @Autowired
     private Launcher launcher;
+
+    @Autowired
+    private JobListener jobListener;
 
 
     @PostMapping(value = "/imports", consumes = "multipart/form-data")
@@ -49,6 +53,19 @@ public class ImportController {
 
         launcher.jobLauncher();
 
-        return null;
+        ImportData importData = jobListener.getImportData();
+
+        if(importData == null){
+             Map<String,Object> response = new HashMap<>();
+             response.put("message", "Failed to start job");
+             return ResponseEntity.status(500).body(response);
+         }
+
+        Map<String,Object> response = new HashMap<>();
+        response.put("id",importData.getId());
+        response.put("status",importData.getImportStatus());
+        response.put("message","Job launched successfully");
+
+        return ResponseEntity.ok(response);
     }
 }
